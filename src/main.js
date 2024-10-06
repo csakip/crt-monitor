@@ -68,7 +68,7 @@ onKeyPress((ch) => {
       crtText.pos.y = 0;
       hasCursor = false;
       finishedTyping = false;
-      slowType = urlParams.get("slowtype") === "true";
+      slowType = true;
       updateScrollbar();
       break;
     }

@@ -5,6 +5,8 @@
     ██      ██   ██    ██        ██  ██  ██ ██    ██ ██  ██ ██ ██    ██    ██    ██ ██   ██ 
      ██████ ██   ██    ██        ██      ██  ██████  ██   ████ ██    ██     ██████  ██   ██ 
 
+Simulates a glitchy CRT monitor text display for creating an ambient atmosphere. 
+
 Keyboard shortcuts:
  - E -> Edit text popup
  - R -> Redraw screen
