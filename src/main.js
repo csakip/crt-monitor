@@ -48,9 +48,11 @@ const crtText = add([
 ]);
 
 const scrollbar = add([rect(20, height()), pos(width() - 50, 25), color(0, 0, 0), opacity(0.5)]);
+scrollbar.hidden = true;
 
 onResize(() => {
   updateScrollbar();
+  if (scrollbar.hidden && crtText.pos.y < 0) crtText.pos.y = 0;
 });
 
 onKeyPress((ch) => {
@@ -92,6 +94,7 @@ onKeyPressRepeat("down", () => {
 });
 
 onScroll((delta) => {
+  if (scrollbar.hidden) return;
   if (delta.y > 0 && crtText.height + crtText.pos.y < height() - 25) return;
   crtText.pos.y = Math.min(0, crtText.pos.y - delta.y / 3);
   updateScrollbar();
@@ -163,6 +166,7 @@ onUpdate(() => {
 function updateScrollbar() {
   const screenHeight = height(); // Height of the screen
   const contentHeight = crtText.height; // Height of the text content
+  scrollbar.hidden = contentHeight < screenHeight;
 
   // Calculate the proportional scrollbar height
   const scrollbarHeight = Math.min(screenHeight, screenHeight * (screenHeight / contentHeight));
