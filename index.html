@@ -18,11 +18,14 @@
           Edit the content and generate the link with shareable url below:
         </div>
         <textarea id="contentText"></textarea>
-        <div>
-          <label for="slowtype">Text appears slowly:</label>
-          <input type="checkbox" id="slowtype" />
+        <div class="textarea-footer">
+          <div>
+            <label for="slowtype">Text appears slowly:</label
+            ><input type="checkbox" id="slowtype" />
+          </div>
+          <div>Uses <a href="https://kaplayjs.com/" target="_blank">KAPLAY</a></div>
         </div>
-        <div><a id="generatedLink" href="#">Generated link</a></div>
+        <div class="link-container"><a id="generatedLink" href="#">Generated link</a></div>
         <div class="buttons">
           <button id="clearButton">Replace content with default</button>
           <button id="generateButton">Copy url to clipboard</button>
