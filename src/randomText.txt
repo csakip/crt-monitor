@@ -1,0 +1,29 @@
+
+                     ██████   ██████  ██       █████  ██████  ██ ███████ 
+                     ██   ██ ██    ██ ██      ██   ██ ██   ██ ██ ██      
+                     ██████  ██    ██ ██      ███████ ██████  ██ ███████ 
+                     ██      ██    ██ ██      ██   ██ ██   ██ ██      ██ 
+                     ██       ██████  ███████ ██   ██ ██   ██ ██ ███████
+                     INTERPLANETARY
+
+Címzett: [PC neve]
+Feladó: POLARIS Interplanetary, Beszerzési Osztály
+Tárgy: Utasítás: Cloudbank küldetés
+=======================================================================
+Küldetés részletei:
+
+    Célállomás: Cloudbank űrállomás
+    Feladat: Leletek és mesterséges intelligencia kutatások megszerzése
+    Kötelező felszerelés: Standard felszerelés, védőfelszerelés
+    Veszélyek: Potenciálisan veszélyes androidok és MI jelenléte
+    Utazás: CFB Horizon III vontatóhajó + POLARIS űrkomp
+    Jelentési kötelezettség:
+      - Bejelentkezés a vontatóhajó elhagyásakor
+      - Felfedezések és eredmények jelentése
+
+Határidő: Azonnali indulás
+Kapcsolattartó: Thorne Jaxon, a CFB Horizon III kapitánya
+
+Együtt a Holnap Felé!
+POLARIS Interplanetary
+Beszerzési Osztály
