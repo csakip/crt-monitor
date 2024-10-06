@@ -76,8 +76,8 @@ onKeyPress((ch) => {
     }
     case "e": {
       const overlay = document.getElementById("overlay");
-      console.log(overlay.style.display);
-      overlay.classList.toggle("hidden");
+      overlay.classList.remove("hidden");
+      document.getElementById("contentText").focus();
       break;
     }
   }
