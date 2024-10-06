@@ -1,13 +1,5 @@
 # CRT monitor simulator
 
-```
-      ██████ ██████  ████████     ███    ███  ██████  ███    ██ ██ ████████  ██████  ██████
-     ██      ██   ██    ██        ████  ████ ██    ██ ████   ██ ██    ██    ██    ██ ██   ██
-     ██      ██████     ██        ██ ████ ██ ██    ██ ██ ██  ██ ██    ██    ██    ██ ██████
-     ██      ██   ██    ██        ██  ██  ██ ██    ██ ██  ██ ██ ██    ██    ██    ██ ██   ██
-      ██████ ██   ██    ██        ██      ██  ██████  ██   ████ ██    ██     ██████  ██   ██
-```
-
 ![CRT monitor simulator screenshot](src/crt-monitor.jpg?raw=true)
 
 Simulates a glitchy CRT monitor text display for creating an ambient atmosphere.
