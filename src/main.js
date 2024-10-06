@@ -15,7 +15,7 @@ document.getElementById("clearButton").addEventListener("click", () => {
 });
 
 // Initialize the Kaplay game with a background color
-let slowType = urlParams.get("slowtype") === "true";
+let slowType = urlParams.get("slowtype") !== "false";
 const blinkSpeed = 530;
 let hasCursor = false;
 const cursorChar = "█";
@@ -84,11 +84,13 @@ onKeyPress((ch) => {
 });
 
 onKeyPressRepeat("up", () => {
+  if (scrollbar.hidden) return;
   crtText.pos.y = Math.min(0, crtText.pos.y + 34);
   updateScrollbar();
 });
 
 onKeyPressRepeat("down", () => {
+  if (scrollbar.hidden) return;
   crtText.pos.y = crtText.pos.y - 34;
   updateScrollbar();
 });
