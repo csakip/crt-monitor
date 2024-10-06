@@ -13,4 +13,4 @@ Keyboard shortcuts:
  ▶ Up / Down arrows (or mouse wheel) -> Scroll screen
  ▶ Esc (while text appearing) --------> Show all the text
 
-Using the Edit popup you can set any text (url length limits apply) and copy and share the url with others.
+Using the Edit popup you can set any text (URL length limits apply) and copy and share the URL with others.
