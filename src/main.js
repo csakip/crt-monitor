@@ -53,6 +53,8 @@ scrollbar.hidden = true;
 onResize(() => {
   updateScrollbar();
   if (scrollbar.hidden && crtText.pos.y < 0) crtText.pos.y = 0;
+  crtText.width = width();
+  scrollbar.pos.x = width() - 50;
 });
 
 onKeyPress((ch) => {
