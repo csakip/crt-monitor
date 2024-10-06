@@ -65,6 +65,7 @@ onKeyPress((ch) => {
     }
     case "r": {
       crtText.text = "";
+      crtText.pos.y = 0;
       hasCursor = false;
       finishedTyping = false;
       slowType = urlParams.get("slowtype") === "true";
