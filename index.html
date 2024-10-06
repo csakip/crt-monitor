@@ -1,9 +1,72 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta charset="UTF-8" />
     <title>crt-monitor</title>
-    <script type="module" crossorigin src="/crt-monitor/assets/index-CdyS-grK.js"></script>
+    <script type="module" crossorigin src="/crt-monitor/assets/index-Fkqr9M_t.js"></script>
+    <link rel="stylesheet" crossorigin href="/crt-monitor/assets/index-DP3Wvpnl.css">
   </head>
   <body style="overflow: hidden">
+    <link rel="icon" href="favicon.ico" type="image/png" sizes="16x16" />
+    <div id="overlay" class="hidden">
+      <div class="popup">
+        <div class="popup-header">
+          CRT monitor simulator. 2024-10-06 Csokáv -
+          <a href="https://github.com/csakip/crt-monitor" target="_blank">GitHub</a>
+        </div>
+        <div class="popup-header">Paste content and generate the url below:</div>
+        <textarea id="contentText"></textarea>
+        <div>
+          <label for="slowtype">Text appears slowly:</label>
+          <input type="checkbox" id="slowtype" />
+        </div>
+        <div><a id="generatedLink" href="#">Generated link</a></div>
+        <div class="buttons">
+          <button id="clearButton">Replace content with default</button>
+          <button id="generateButton">Copy url to clipboard</button>
+          <button id="closeButton">Close</button>
+        </div>
+      </div>
+    </div>
+    <script>
+      const slowTypeCheckbox = document.getElementById("slowtype");
+      const contentTextarea = document.getElementById("contentText");
+      const overlay = document.getElementById("overlay");
+
+      document.getElementById("closeButton").addEventListener("click", () => {
+        overlay.classList.add("hidden");
+        document.querySelector("canvas").focus();
+      });
+
+      slowTypeCheckbox.addEventListener("change", () => {
+        generateLink();
+      });
+
+      contentTextarea.addEventListener("input", () => {
+        generateLink();
+      });
+
+      function generateLink() {
+        const content = contentTextarea.value;
+        const url = new URL(window.location.href);
+        url.searchParams.set("content", content);
+        url.searchParams.set(
+          "slowtype",
+          document.getElementById("slowtype").checked ? "true" : "false"
+        );
+        document.getElementById("generatedLink").href = url.toString();
+        return url.toString();
+      }
+
+      document.getElementById("generateButton").addEventListener("click", () => {
+        const url = generateLink();
+        navigator.clipboard.writeText(url.toString());
+      });
+
+      const urlParams = new URLSearchParams(window.location.search);
+      slowTypeCheckbox.checked = urlParams.get("slowtype") === "true";
+
+      generateLink();
+    </script>
   </body>
 </html>
