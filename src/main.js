@@ -14,7 +14,17 @@ document.getElementById("clearButton").addEventListener("click", () => {
   generateLink();
 });
 
-// Initialize the Kaplay game with a background color
+const colors = { g: "green", y: "yellow", b: "blue" };
+const colorSelect = document.getElementById("color");
+const currentColor = colors[urlParams.get("c")] ?? "green";
+document.body.classList.add(currentColor);
+colorSelect.value = currentColor;
+
+colorSelect.addEventListener("change", () => {
+  generateLink();
+  setColors(document.getElementById("color").value.slice(0, 1));
+});
+
 let slowType = urlParams.get("slowtype") !== "false";
 const blinkSpeed = 530;
 let hasCursor = false;
@@ -25,7 +35,10 @@ let typeTimer = 0;
 // let sound;
 let finishedTyping = false;
 
-kaplay({ background: [0, 80, 0], loadingScreen: false, fullscreen: true });
+kaplay({
+  background: [0, 80, 0],
+  loadingScreen: false,
+});
 
 loadFont("console", "/crt-monitor/monofonto_rg.otf");
 
@@ -36,16 +49,17 @@ loadShaderURL("crt", null, "/crt-monitor/shaders/crt.frag");
 // Create a text object
 const crtText = add([
   text(slowType ? "" : content, {
-    size: 30, // Initial text size
-    width: width(), // Width of the text object
+    size: 37, // Text size
+    width: 1920, // Width of the text object
     align: "left", // Left alignment
     font: "console", // Font name
-    letterSpacing: 3.5,
-    lineSpacing: 3,
   }),
+  scale(document.body.clientWidth / 1920, 1),
   pos(10, 10), // Position at the top-left corner
   color(0, 255, 51), // Set text color to green
 ]);
+
+setColors();
 
 const scrollbar = add([rect(20, height()), pos(width() - 50, 25), color(0, 0, 0), opacity(0.5)]);
 scrollbar.hidden = true;
@@ -53,7 +67,8 @@ scrollbar.hidden = true;
 onResize(() => {
   updateScrollbar();
   if (scrollbar.hidden && crtText.pos.y < 0) crtText.pos.y = 0;
-  crtText.width = width();
+  kaplay.width = document.body.clientWidth;
+  crtText.scale.x = document.body.clientWidth / crtText.width;
   scrollbar.pos.x = width() - 50;
 });
 
@@ -166,6 +181,17 @@ onUpdate(() => {
     flashGlitch: glitch,
   });
 });
+
+function setColors(c) {
+  const crtColors = {
+    g: { foreground: [0, 255, 51], background: [0, 80, 0] },
+    y: { foreground: [235, 231, 40], background: [85, 68, 0] },
+    b: { foreground: [124, 123, 218], background: [52, 40, 152] },
+  };
+  const currentColor = c ?? urlParams.get("c") ?? "g";
+  crtText.color = new Color(...crtColors[currentColor].foreground);
+  setBackground(crtColors[currentColor].background);
+}
 
 function updateScrollbar() {
   const screenHeight = height(); // Height of the screen

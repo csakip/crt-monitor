@@ -1,6 +1,25 @@
+:root {
+  --background: rgb(0, 51, 0);
+  --foreground: rgb(0, 136, 0);
+  --highlight: rgb(0, 170, 0);
+}
+
+body.yellow {
+  --background: rgb(85, 68, 0);
+  --foreground: rgb(163, 152, 52);
+  --highlight: rgb(235, 231, 40);
+}
+
+body.blue {
+  --background: rgb(52, 40, 152);
+  --foreground: rgb(102, 101, 170);
+  --highlight: rgb(124, 123, 218);
+}
+
 .hidden {
   display: none !important;
 }
+
 #overlay {
   font-family: monospace;
   position: absolute;
@@ -9,7 +28,7 @@
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  color: #080;
+  color: var(--foreground);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -22,22 +41,31 @@
 
 .popup {
   padding: 1rem;
-  width: 45%;
+  width: 50%;
   height: 60%;
   background-color: #000;
-  border: 2px solid #080;
+  border: 2px solid var(--foreground);
   display: flex;
   flex-direction: column;
 }
 
-.popup textarea {
+.popup .textarea-container {
   flex: 1;
-  background-color: #030;
-  border-color: #080;
-  color: #0a0;
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--foreground) var(--background);
+  text-align: center;
+}
+
+.popup textarea {
+  background-color: var(--background);
+  border-color: var(--foreground);
+  color: var(--highlight);
   font-size: large;
   scrollbar-width: thin;
-  scrollbar-color: #080 #030;
+  scrollbar-color: var(--foreground) var(--background);
+  height: calc(100% - 10px);
+  resize: none;
 }
 
 .popup textarea:focus {
@@ -49,24 +77,25 @@
 }
 
 .popup .buttons button {
-  background-color: #030;
-  color: #5c5;
+  background-color: var(--background);
+  color: var(--highlight);
   border: 0;
   padding: 0.5rem;
   cursor: pointer;
 }
 .popup .buttons button:hover {
-  background-color: #060;
+  background-color: var(--foreground);
+  color: var(--background);
 }
 
 .popup input[type="checkbox"] {
   cursor: pointer;
-  background-color: #030;
-  accent-color: #080;
+  background-color: var(--background);
+  accent-color: var(--foreground);
 }
 
 .popup a {
-  color: #0a0;
+  color: var(--highlight);
 }
 
 .popup .link-container {
@@ -76,15 +105,27 @@
 }
 
 .popup a:visited {
-  color: #0a0;
+  color: var(--highlight);
 }
 
 .popup .textarea-footer {
   display: flex;
   justify-content: space-between;
 }
+.popup .textarea-footer label {
+  margin-left: 1rem;
+}
+
+.popup .textarea-footer select {
+  background-color: var(--background);
+  color: var(--highlight);
+  border: 0;
+  padding: 3px 10px;
+  cursor: pointer;
+  border: 1px solid var(--foreground);
+}
 
 #generatedLink {
-  color: #0a0;
+  color: var(--highlight);
   font-size: larger;
 }
