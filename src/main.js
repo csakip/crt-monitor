@@ -34,6 +34,7 @@ let glitchTimer = 0;
 let typeTimer = 0;
 // let sound;
 let finishedTyping = false;
+let touchStartPos = null;
 
 kaplay({
   background: [0, 80, 0],
@@ -72,6 +73,21 @@ onResize(() => {
   scrollbar.pos.x = width() - 50;
 });
 
+onTouchStart(({ y }) => {
+  touchStartPos = y;
+});
+onTouchMove(({ y }) => {
+  if (scrollbar.hidden) return;
+  const delta = y - touchStartPos;
+  touchStartPos = y;
+  if (delta < 0 && crtText.height + crtText.pos.y < height() - 25) return;
+  crtText.pos.y = Math.min(0, crtText.pos.y + delta);
+  updateScrollbar();
+});
+onTouchEnd(() => {
+  touchStartPos = null;
+});
+
 onKeyPress((ch) => {
   switch (ch) {
     case "escape": {
@@ -107,7 +123,7 @@ onKeyPressRepeat("up", () => {
 });
 
 onKeyPressRepeat("down", () => {
-  if (scrollbar.hidden) return;
+  if (crtText.height + crtText.pos.y < height() - 25) return;
   crtText.pos.y = crtText.pos.y - 34;
   updateScrollbar();
 });
@@ -180,6 +196,8 @@ onUpdate(() => {
     iResolution: vec2(width(), height()),
     flashGlitch: glitch,
   });
+
+  setTimeout(updateScrollbar, 10);
 });
 
 function setColors(c) {
