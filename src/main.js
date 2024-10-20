@@ -41,7 +41,7 @@ kaplay({
   loadingScreen: false,
 });
 
-loadFont("console", "/crt-monitor/monofonto_rg.otf");
+loadFont("console", "/crt-monitor/monofonto_rg.otf"); // Text size 27.3
 
 loadShaderURL("crt", null, "/crt-monitor/shaders/crt.frag");
 
@@ -50,7 +50,7 @@ loadShaderURL("crt", null, "/crt-monitor/shaders/crt.frag");
 // Create a text object
 const crtText = add([
   text(slowType ? "" : content, {
-    size: 37, // Text size
+    size: 27.3, // Text size
     width: 1920, // Width of the text object
     align: "left", // Left alignment
     font: "console", // Font name
@@ -59,6 +59,8 @@ const crtText = add([
   pos(10, 10), // Position at the top-left corner
   color(0, 255, 51), // Set text color to green
 ]);
+//loadSprite("map", "/crt-monitor/map.png");
+//const crtText = add([sprite("map"), pos(10, 10)]);
 
 setColors();
 

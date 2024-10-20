@@ -41,7 +41,7 @@ body.blue {
 
 .popup {
   padding: 1rem;
-  width: 50%;
+  width: min-content;
   height: 60%;
   background-color: #000;
   border: 2px solid var(--foreground);
@@ -61,7 +61,7 @@ body.blue {
   background-color: var(--background);
   border-color: var(--foreground);
   color: var(--highlight);
-  font-size: large;
+  font-size: 12px;
   scrollbar-width: thin;
   scrollbar-color: var(--foreground) var(--background);
   height: calc(100% - 10px);
