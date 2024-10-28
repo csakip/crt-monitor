@@ -49,6 +49,20 @@ body.blue {
   flex-direction: column;
 }
 
+.popup .tab-button {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  background-color: var(--background);
+  color: var(--highlight);
+  border: 0;
+  padding: 0.5rem;
+  cursor: pointer;
+}
+.popup .tab-button:hover {
+  background-color: var(--foreground);
+  color: var(--background);
+}
+
 .popup .textarea-container {
   flex: 1;
   overflow: auto;
@@ -57,19 +71,35 @@ body.blue {
   text-align: center;
 }
 
+.popup input[type="text"],
 .popup textarea {
   background-color: var(--background);
-  border-color: var(--foreground);
   color: var(--highlight);
   font-size: 12px;
   scrollbar-width: thin;
   scrollbar-color: var(--foreground) var(--background);
-  height: calc(100% - 10px);
   resize: none;
+  border: 1px solid var(--foreground);
 }
 
+.popup textarea {
+  height: calc(100% - 10px);
+}
+
+.popup input[type="text"] {
+  padding: 5px;
+  width: 60rem;
+}
+
+.popup input:focus,
 .popup textarea:focus {
   outline: none;
+}
+
+#imageTab {
+  border: 1px solid var(--foreground);
+  padding: 0 0.5rem 0.5rem 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .popup .buttons {
@@ -92,6 +122,7 @@ body.blue {
   cursor: pointer;
   background-color: var(--background);
   accent-color: var(--foreground);
+  margin-right: 2rem;
 }
 
 .popup a {
@@ -111,9 +142,6 @@ body.blue {
 .popup .textarea-footer {
   display: flex;
   justify-content: space-between;
-}
-.popup .textarea-footer label {
-  margin-left: 1rem;
 }
 
 .popup .textarea-footer select {

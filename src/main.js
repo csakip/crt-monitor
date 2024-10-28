@@ -4,9 +4,12 @@ import defaultText from "/src/defaultText.txt?raw";
 // Use https://patorjk.com/software/taag to generate ASCII art
 
 const urlParams = new URLSearchParams(window.location.search);
-let content = urlParams.get("content") ?? defaultText;
+let contentString = urlParams.get("content") ?? defaultText;
+const imageLink = decodeURIComponent(urlParams.get("image") || "");
 
-document.getElementById("contentText").value = content;
+document.getElementById("contentText").value = contentString;
+document.getElementById("imageLink").value = imageLink;
+
 generateLink();
 
 document.getElementById("clearButton").addEventListener("click", () => {
@@ -25,6 +28,12 @@ colorSelect.addEventListener("change", () => {
   setColors(document.getElementById("color").value.slice(0, 1));
 });
 
+const crtColors = {
+  g: { foreground: [0, 255, 51], background: [0, 80, 0], tint: [0.0, 1.0, 0.0] },
+  y: { foreground: [235, 231, 40], background: [85, 68, 0], tint: [1.5, 1.5, 0.0] },
+  b: { foreground: [124, 123, 218], background: [52, 40, 152], tint: [0.0, 0.0, 3.0] },
+};
+
 let slowType = urlParams.get("slowtype") !== "false";
 const blinkSpeed = 530;
 let hasCursor = false;
@@ -32,7 +41,6 @@ const cursorChar = "█";
 let glitch = 1;
 let glitchTimer = 0;
 let typeTimer = 0;
-// let sound;
 let finishedTyping = false;
 let touchStartPos = null;
 
@@ -41,38 +49,75 @@ kaplay({
   loadingScreen: false,
 });
 
-loadFont("console", "/crt-monitor/monofonto_rg.otf"); // Text size 27.3
+if (imageLink) {
+  loadSprite("map", imageLink);
+}
+
+loadFont("console", "/crt-monitor/monofonto_rg.otf");
 
 loadShaderURL("crt", null, "/crt-monitor/shaders/crt.frag");
 
 // loadSound("click", "/crt-monitor/click.wav");
 
-// Create a text object
-const crtText = add([
-  text(slowType ? "" : content, {
-    size: 27.3, // Text size
-    width: 1920, // Width of the text object
-    align: "left", // Left alignment
-    font: "console", // Font name
-  }),
-  scale(document.body.clientWidth / 1920, 1),
-  pos(10, 10), // Position at the top-left corner
-  color(0, 255, 51), // Set text color to green
-]);
-//loadSprite("map", "/crt-monitor/map.png");
-//const crtText = add([sprite("map"), pos(10, 10)]);
-
-setColors();
-
 const scrollbar = add([rect(20, height()), pos(width() - 50, 25), color(0, 0, 0), opacity(0.5)]);
 scrollbar.hidden = true;
 
-onResize(() => {
+let tintColor = rgb(1, 1, 0);
+let contentObj;
+if (imageLink) {
+  loadShader(
+    "tint",
+    null,
+    `
+		uniform vec3 u_tint;
+
+		vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
+			vec4 c = def_frag();
+			float luminance = dot(c.rgb, vec3(0.3, 0.59, 0.11));
+			float mixFactor = smoothstep(0.0, 1.0, luminance);
+			return mix(c, vec4(u_tint, 1.0), mixFactor * 1.0);
+		}
+`
+  );
+
+  contentObj = add([
+    sprite("map"),
+    scale(1, 1),
+    anchor("top"),
+    pos(width() / 2, 0),
+    // color(255, 255, 255),
+
+    shader("tint", () => ({ u_tint: tintColor })),
+  ]);
+  setTimeout(resize, 100);
+} else {
+  // Create a text object
+  contentObj = add([
+    text(slowType ? "" : contentString, {
+      size: 27.3, // Text size
+      width: 1920, // Width of the text object
+      align: "left", // Left alignment
+      font: "console", // Font name
+    }),
+    scale(document.body.clientWidth / 1920, 1),
+    pos(10, 10), // Position at the top-left corner
+    color(255, 255, 255),
+  ]);
+}
+
+setColors();
+
+function resize() {
   updateScrollbar();
-  if (scrollbar.hidden && crtText.pos.y < 0) crtText.pos.y = 0;
+  if (scrollbar.hidden && contentObj.pos.y < 0) contentObj.pos.y = 0;
+  if (imageLink) return;
   kaplay.width = document.body.clientWidth;
-  crtText.scale.x = document.body.clientWidth / crtText.width;
+  contentObj.scale.x = document.body.clientWidth / contentObj.width;
   scrollbar.pos.x = width() - 50;
+}
+
+onResize(() => {
+  resize();
 });
 
 onTouchStart(({ y }) => {
@@ -82,8 +127,8 @@ onTouchMove(({ y }) => {
   if (scrollbar.hidden) return;
   const delta = y - touchStartPos;
   touchStartPos = y;
-  if (delta < 0 && crtText.height + crtText.pos.y < height() - 25) return;
-  crtText.pos.y = Math.min(0, crtText.pos.y + delta);
+  if (delta < 0 && contentObj.height + contentObj.pos.y < height() - 25) return;
+  contentObj.pos.y = Math.min(0, contentObj.pos.y + delta);
   updateScrollbar();
 });
 onTouchEnd(() => {
@@ -93,16 +138,18 @@ onTouchEnd(() => {
 onKeyPress((ch) => {
   switch (ch) {
     case "escape": {
+      if (imageLink) return;
       if (slowType) {
         slowType = false;
-        crtText.text = content;
+        contentObj.text = contentString;
         updateScrollbar();
       }
       break;
     }
     case "r": {
-      crtText.text = "";
-      crtText.pos.y = 0;
+      if (imageLink) return;
+      contentObj.text = "";
+      contentObj.pos.y = 0;
       hasCursor = false;
       finishedTyping = false;
       slowType = true;
@@ -120,34 +167,36 @@ onKeyPress((ch) => {
 
 onKeyPressRepeat("up", () => {
   if (scrollbar.hidden) return;
-  crtText.pos.y = Math.min(0, crtText.pos.y + 34);
+  contentObj.pos.y = Math.min(0, contentObj.pos.y + 34);
   updateScrollbar();
 });
 
 onKeyPressRepeat("down", () => {
-  if (crtText.height + crtText.pos.y < height() - 25) return;
-  crtText.pos.y = crtText.pos.y - 34;
+  if (contentObj.height + contentObj.pos.y < height() - 25) return;
+  contentObj.pos.y = contentObj.pos.y - 34;
   updateScrollbar();
 });
 
 onScroll((delta) => {
   if (scrollbar.hidden) return;
-  if (delta.y > 0 && crtText.height + crtText.pos.y < height() - 25) return;
-  crtText.pos.y = Math.min(0, crtText.pos.y - delta.y / 3);
+  if (delta.y > 0 && contentObj.height + contentObj.pos.y < height() - 25) return;
+  contentObj.pos.y = Math.min(0, contentObj.pos.y - delta.y / 3);
   updateScrollbar();
 });
 
 // Handle cursor visibility
-loop(blinkSpeed / 1000, () => {
-  if (crtText.text.length < content.length) return;
-  if (!hasCursor) {
-    crtText.text += cursorChar;
-    hasCursor = true;
-  } else {
-    crtText.text = crtText.text.substring(0, crtText.text.length - 1);
-    hasCursor = false;
-  }
-});
+if (!imageLink) {
+  loop(blinkSpeed / 1000, () => {
+    if (contentObj.text.length < contentString.length) return;
+    if (!hasCursor) {
+      contentObj.text += cursorChar;
+      hasCursor = true;
+    } else {
+      contentObj.text = contentObj.text.substring(0, contentObj.text.length - 1);
+      hasCursor = false;
+    }
+  });
+}
 
 // Update the CRT post-processing effect
 onUpdate(() => {
@@ -164,22 +213,22 @@ onUpdate(() => {
     }
   }
 
-  if (slowType && !finishedTyping) {
+  if (!imageLink && slowType && !finishedTyping) {
     if (t > typeTimer) {
       const charactersToAdd = Math.ceil(Math.random() * 10) + 2; // Randomly add 1-5 characters each time
       for (let i = 0; i < charactersToAdd; i++) {
-        if (crtText.text.length - 1 >= content.length) {
+        if (contentObj.text.length - 1 >= contentString.length) {
           finishedTyping = true;
           break; // Prevent overflow
         }
 
-        crtText.text = crtText.text.slice(0, -1); // Remove cursor
+        contentObj.text = contentObj.text.slice(0, -1); // Remove cursor
 
         // Check if we're at the last character
-        if (crtText.text.length === content.length - 1) {
-          crtText.text += content[crtText.text.length]; // Add last character without cursor
+        if (contentObj.text.length === contentString.length - 1) {
+          contentObj.text += contentString[contentObj.text.length]; // Add last character without cursor
         } else {
-          crtText.text += content[crtText.text.length] + cursorChar; // Add next character and cursor
+          contentObj.text += contentString[contentObj.text.length] + cursorChar; // Add next character and cursor
         }
       }
       // if (sound) sound.stop();
@@ -203,19 +252,15 @@ onUpdate(() => {
 });
 
 function setColors(c) {
-  const crtColors = {
-    g: { foreground: [0, 255, 51], background: [0, 80, 0] },
-    y: { foreground: [235, 231, 40], background: [85, 68, 0] },
-    b: { foreground: [124, 123, 218], background: [52, 40, 152] },
-  };
   const currentColor = c ?? urlParams.get("c") ?? "g";
-  crtText.color = new Color(...crtColors[currentColor].foreground);
+  contentObj.color = new Color(...crtColors[currentColor].foreground);
   setBackground(crtColors[currentColor].background);
+  tintColor = rgb(crtColors[currentColor].tint);
 }
 
 function updateScrollbar() {
   const screenHeight = height(); // Height of the screen
-  const contentHeight = crtText.height; // Height of the text content
+  const contentHeight = contentObj.height; // Height of the text content
   scrollbar.hidden = contentHeight < screenHeight;
 
   // Calculate the proportional scrollbar height
@@ -224,40 +269,8 @@ function updateScrollbar() {
 
   // The amount the content has moved from its maximum "scrolled up" position
   const maxScrollDistance = contentHeight - screenHeight;
-  const scrollProgress = -crtText.pos.y / maxScrollDistance;
+  const scrollProgress = -contentObj.pos.y / maxScrollDistance;
 
   // Calculate scrollbar position based on content scroll
   scrollbar.pos.y = scrollProgress * (screenHeight - scrollbarHeight);
 }
-
-// // Handle character input
-// onKeyPressRepeat((ch) => {
-//   if (ch === "space") ch = " ";
-//   if (ch.length > 1) return;
-//   // Always make sure to remove the cursor character if it is the last character
-//   if (hasCursor) {
-//     input.text = input.text.substring(0, input.text.length - 1); // Remove the cursor before adding new char
-//   }
-//   const character = isKeyDown("shift") ? ch.toUpperCase() : ch;
-//   input.text += character + cursorChar;
-//   hasCursor = true;
-// });
-
-// Handle new line insertion on Enter key
-// onKeyPressRepeat("enter", () => {
-//   // Remove the cursor if it is the last character
-//   if (hasCursor) {
-//     input.text = input.text.substring(0, input.text.length - 1);
-//   }
-//   input.text += "\n" + cursorChar;
-//   hasCursor = true;
-// });
-
-// Handle backspace to delete the last character
-// onKeyPressRepeat("backspace", () => {
-//   if (input.text.length > 0) {
-//     input.text = input.text.substring(0, input.text.length - (hasCursor ? 2 : 1)); // Remove cursor if it's last
-//     input.text += cursorChar;
-//     hasCursor = true;
-//   }
-// });
