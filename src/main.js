@@ -30,8 +30,8 @@ colorSelect.addEventListener("change", () => {
 
 const crtColors = {
   g: { foreground: [0, 255, 51], background: [0, 80, 0], tint: [0.0, 1.0, 0.0] },
-  y: { foreground: [235, 231, 40], background: [85, 68, 0], tint: [1.5, 1.5, 0.0] },
-  b: { foreground: [124, 123, 218], background: [52, 40, 152], tint: [0.0, 0.0, 3.0] },
+  y: { foreground: [235, 231, 40], background: [85, 68, 0], tint: [1.0, 1.0, 0.0] },
+  b: { foreground: [124, 123, 218], background: [52, 40, 152], tint: [0.0, 0.0, 1.0] },
 };
 
 let slowType = urlParams.get("slowtype") !== "false";
@@ -74,8 +74,9 @@ if (imageLink) {
 		vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
 			vec4 c = def_frag();
 			float luminance = dot(c.rgb, vec3(0.3, 0.59, 0.11));
+			vec3 greyscale = vec3(luminance);
 			float mixFactor = smoothstep(0.0, 1.0, luminance);
-			return mix(c, vec4(u_tint, 1.0), mixFactor * 1.0);
+			return mix(vec4(greyscale,c.a), vec4(u_tint, 1.0), mixFactor * 1.0);	
 		}
 `
   );
