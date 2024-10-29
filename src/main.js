@@ -184,6 +184,7 @@ onKeyPress((ch) => {
       document.getElementById("contentText").focus();
       break;
     }
+    case "=":
     case "+": {
       zoomImage(-1);
       break;
