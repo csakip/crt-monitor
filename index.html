@@ -93,7 +93,10 @@
       function generateLink() {
         const activeTab = document.querySelector(".tab:not(.hidden)").id;
         if (activeTab === "imageTab") {
-          const imageUrl = document.getElementById("imageLink").value;
+          const imageUrl = document
+            .getElementById("imageLink")
+            .value.replace("[img]", "")
+            .replace("[/img]", "");
           if (!imageUrl) {
             document.getElementById("generatedLink").href = "#";
             return "#";
