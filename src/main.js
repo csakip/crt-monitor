@@ -184,31 +184,54 @@ onKeyPress((ch) => {
       document.getElementById("contentText").focus();
       break;
     }
+    case "+": {
+      zoomImage(-1);
+      break;
+    }
+    case "-": {
+      zoomImage(1);
+      break;
+    }
   }
 });
 
 onKeyPressRepeat("up", () => {
+  if (imageLink) {
+    moveImage(0, 1);
+    return;
+  }
   if (scrollbar.hidden) return;
   contentObj.pos.y = Math.min(0, contentObj.pos.y + 34);
   updateScrollbar();
 });
 
 onKeyPressRepeat("down", () => {
+  if (imageLink) {
+    moveImage(0, -1);
+    return;
+  }
   if (contentObj.height + contentObj.pos.y < height() - 25) return;
   contentObj.pos.y = contentObj.pos.y - 34;
   updateScrollbar();
 });
 
+onKeyPressRepeat("left", () => {
+  if (imageLink) {
+    moveImage(1, 0);
+    return;
+  }
+});
+
+onKeyPressRepeat("right", () => {
+  if (imageLink) {
+    moveImage(-1, 0);
+    return;
+  }
+});
+
 onScroll((delta) => {
   if (imageLink) {
-    if (zoomEffectTimer) clearTimeout(zoomEffectTimer);
-    zoomEffect = 1;
-    cameraScale *= delta.y < 0 ? zoomFactor : 1 / zoomFactor;
-    //cameraScale = cameraScale * (1 - 0.6 * Math.sign(delta.y));
-    camScale(cameraScale);
-    zoomEffectTimer = setTimeout(() => {
-      zoomEffect = 0;
-    }, 250);
+    zoomImage(delta.y);
   } else {
     if (scrollbar.hidden) return;
     if (delta.y > 0 && contentObj.height + contentObj.pos.y < height() - 25) return;
@@ -296,6 +319,27 @@ onUpdate(() => {
 
   setTimeout(updateScrollbar, 10);
 });
+
+function zoomImage(zoom) {
+  if (zoomEffectTimer) clearTimeout(zoomEffectTimer);
+  zoomEffect = 1;
+  cameraScale *= zoom < 0 ? zoomFactor : 1 / zoomFactor;
+  //cameraScale = cameraScale * (1 - 0.6 * Math.sign(delta.y));
+  camScale(cameraScale);
+  zoomEffectTimer = setTimeout(() => {
+    zoomEffect = 0;
+  }, 250);
+}
+
+function moveImage(x, y) {
+  const scaleWith = 1 / cameraScale;
+  const adjustedSnapSize = snapSize * scaleWith;
+
+  cameraPosition.x += x * adjustedSnapSize;
+  cameraPosition.y += y * adjustedSnapSize;
+  realPosition = vec2(cameraPosition.x, cameraPosition.y);
+  camPos(cameraPosition);
+}
 
 function setColors(c) {
   const currentColor = c ?? urlParams.get("c") ?? "g";
