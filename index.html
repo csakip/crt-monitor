@@ -105,6 +105,7 @@
 
           const url = new URL(window.location.href);
           url.searchParams.set("image", encodedUrl);
+          url.searchParams.delete("content");
           url.searchParams.set("c", colorSelect.value.slice(0, 1));
           document.getElementById("generatedLink").href = url.toString();
           return url.toString();
@@ -113,6 +114,7 @@
         if (activeTab === "textTab") {
           const content = contentTextarea.value;
           const url = new URL(window.location.href);
+          url.searchParams.delete("image");
           url.searchParams.set("content", content);
           url.searchParams.set(
             "slowtype",

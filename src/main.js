@@ -5,7 +5,7 @@ import defaultText from "/src/defaultText.txt?raw";
 
 const urlParams = new URLSearchParams(window.location.search);
 let contentString = urlParams.get("content") ?? defaultText;
-const imageLink = decodeURIComponent(urlParams.get("image") || "");
+let imageLink = decodeURIComponent(urlParams.get("image") || "");
 
 document.getElementById("contentText").value = contentString;
 document.getElementById("imageLink").value = imageLink;
@@ -31,7 +31,7 @@ colorSelect.addEventListener("change", () => {
 const crtColors = {
   g: { foreground: [0, 255, 51], background: [0, 80, 0], tint: [0.0, 1.0, 0.0] },
   y: { foreground: [235, 231, 40], background: [85, 68, 0], tint: [1.0, 1.0, 0.0] },
-  b: { foreground: [124, 123, 218], background: [52, 40, 152], tint: [0.0, 0.0, 1.0] },
+  b: { foreground: [124, 123, 218], background: [52, 40, 152], tint: [0.3, 0.3, 1.0] },
 };
 
 let slowType = urlParams.get("slowtype") !== "false";
@@ -54,8 +54,22 @@ kaplay({
 });
 let realPosition = vec2(0, 0);
 
+let mapLoaded;
 if (imageLink) {
-  loadSprite("map", imageLink);
+  mapLoaded = loadSprite("map", imageLink).catch((e) => {
+    console.error(e);
+    add([
+      text("Failed to load image.", {
+        size: 30, // Text size
+        width: width(),
+        align: "center", // Left alignment
+        font: "console", // Font name
+      }),
+      anchor("center"),
+      pos(width() / 2, height() / 2),
+      color(255, 255, 255),
+    ]);
+  });
 }
 
 loadFont("console", "/crt-monitor/monofonto_rg.otf");
