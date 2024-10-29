@@ -14,3 +14,4 @@ Keyboard shortcuts:
  ▶ Esc (while text appearing) --------> Show all the text
 
 Using the Edit popup you can set any text (URL length limits apply) and copy and share the URL with others.
+Or you can set a URL to an image file, preferably a png which you can pan and zoom around with the mouse.

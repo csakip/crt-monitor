@@ -105,7 +105,9 @@ vec4 frag(vec2 fragCoord, vec2 uv, vec4 fragColor, sampler2D tex) {
 
 				if(zoomEffect == 1.0) {
 					vec4 zoomDistortColor = texture2D(tex, fault(uv));
-        	color = zoomDistortColor.rgb * noise(uv);
+					vec2 noiseUV = floor(uv * 300.0) / 401.0; // adjust 20.0 for block size
+    			float noiseValue = noise(noiseUV);
+        	color = zoomDistortColor.rgb * noiseValue;
 				} else {
 					vec4 fisheyeColor = texture2D(tex, fisheyeUV);
 					color = fisheyeColor.rgb;

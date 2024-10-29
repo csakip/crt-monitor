@@ -43,13 +43,16 @@ let glitchTimer = 0;
 let typeTimer = 0;
 let finishedTyping = false;
 let touchStartPos = null;
+const zoomFactor = 1.5; // Adjust for preferred step size
 let zoomEffect = 0.0;
 let zoomEffectTimer;
+const snapSize = 50;
 
 kaplay({
   background: [0, 80, 0],
   loadingScreen: false,
 });
+let realPosition = vec2(0, 0);
 
 if (imageLink) {
   loadSprite("map", imageLink);
@@ -91,10 +94,9 @@ if (imageLink) {
     scale(1, 1),
     anchor("top"),
     pos(width() / 2, 0),
-    // color(255, 255, 255),
-
     shader("tint", () => ({ u_tint: tintColor })),
   ]);
+  realPosition = vec2(width() / 2, height() / 2);
   setTimeout(resize, 100);
 } else {
   // Create a text object
@@ -187,11 +189,12 @@ onScroll((delta) => {
   if (imageLink) {
     if (zoomEffectTimer) clearTimeout(zoomEffectTimer);
     zoomEffect = 1;
-    cameraScale = cameraScale * (1 - 0.6 * Math.sign(delta.y));
+    cameraScale *= delta.y < 0 ? zoomFactor : 1 / zoomFactor;
+    //cameraScale = cameraScale * (1 - 0.6 * Math.sign(delta.y));
     camScale(cameraScale);
     zoomEffectTimer = setTimeout(() => {
       zoomEffect = 0;
-    }, 500);
+    }, 250);
   } else {
     if (scrollbar.hidden) return;
     if (delta.y > 0 && contentObj.height + contentObj.pos.y < height() - 25) return;
@@ -260,7 +263,12 @@ onUpdate(() => {
 
   if (imageLink) {
     if (isMouseDown("left") && isMouseMoved()) {
-      cameraPosition = cameraPosition.sub(mouseDeltaPos().scale(1 / cameraScale));
+      const scaleWith = 1 / cameraScale;
+      realPosition = realPosition.sub(mouseDeltaPos().scale(scaleWith));
+      const adjustedSnapSize = snapSize * scaleWith;
+
+      cameraPosition.x = Math.round(realPosition.x / adjustedSnapSize) * adjustedSnapSize;
+      cameraPosition.y = Math.round(realPosition.y / adjustedSnapSize) * adjustedSnapSize;
       camPos(cameraPosition);
     }
   }
