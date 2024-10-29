@@ -5,9 +5,22 @@ uniform float iTime;
 uniform vec2 iResolution;
 uniform sampler2D tex;
 uniform float flashGlitch;
+uniform float zoomEffect;
 
 float fishEyeX = 0.01 * (flashGlitch * 0.3); // Adjust for horizontal fisheye strength
 float fishEyeY = 0.07 * (flashGlitch * 0.3); // Adjust for vertical fisheye strength
+
+float noise(vec2 uv)
+{
+    return fract(sin(dot(uv + iTime * 0.1, vec2(12.9898, 78.233))) * 43758.5453123)*2.0;
+}
+
+vec2 fault(vec2 uv)
+{
+    float v = cos(2.0 * pi * (uv.x + uv.y * 3.0 + iTime * 10.2)); // phase varies by row
+    uv.x += v * 0.5;
+    return uv;
+}
 
 vec2 CRTCurveUV(vec2 uv) {
     uv = uv * 2.0 - 1.0;
@@ -90,13 +103,19 @@ vec4 frag(vec2 fragCoord, vec2 uv, vec4 fragColor, sampler2D tex) {
 				fisheyeUV = fault(fisheyeUV + vec2(0.0, fract(t * 2.0)), 1.0 * pow(0.4, 4.0)) - vec2(0.0, fract(t * 2.0));
 				fisheyeUV = fault(fisheyeUV + vec2(0.0, fract(t * 1.0)), 1.0 * pow(0.3, 3.0)) - vec2(0.0, fract(t * 1.0));
 
-        vec4 fisheyeColor = texture2D(tex, fisheyeUV);
-        color = fisheyeColor.rgb;
+				if(zoomEffect == 1.0) {
+					vec4 zoomDistortColor = texture2D(tex, fault(uv));
+        	color = zoomDistortColor.rgb * noise(uv);
+				} else {
+					vec4 fisheyeColor = texture2D(tex, fisheyeUV);
+					color = fisheyeColor.rgb;
+				}
 
         // Apply vignette and scanline effects
         drawVerticalArtifacts(color, uv);
         drawScanline(color, uv);
         drawVignette(color, fisheyeUV);
+
 
     }
 

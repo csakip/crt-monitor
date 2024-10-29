@@ -43,6 +43,8 @@ let glitchTimer = 0;
 let typeTimer = 0;
 let finishedTyping = false;
 let touchStartPos = null;
+let zoomEffect = 0.0;
+let zoomEffectTimer;
 
 kaplay({
   background: [0, 80, 0],
@@ -61,6 +63,9 @@ loadShaderURL("crt", null, "/crt-monitor/shaders/crt.frag");
 
 const scrollbar = add([rect(20, height()), pos(width() - 50, 25), color(0, 0, 0), opacity(0.5)]);
 scrollbar.hidden = true;
+
+let cameraPosition = camPos();
+let cameraScale = 1;
 
 let tintColor = rgb(1, 1, 0);
 let contentObj;
@@ -125,7 +130,7 @@ onTouchStart(({ y }) => {
   touchStartPos = y;
 });
 onTouchMove(({ y }) => {
-  if (scrollbar.hidden) return;
+  if (scrollbar.hidden || imageLink) return;
   const delta = y - touchStartPos;
   touchStartPos = y;
   if (delta < 0 && contentObj.height + contentObj.pos.y < height() - 25) return;
@@ -179,10 +184,20 @@ onKeyPressRepeat("down", () => {
 });
 
 onScroll((delta) => {
-  if (scrollbar.hidden) return;
-  if (delta.y > 0 && contentObj.height + contentObj.pos.y < height() - 25) return;
-  contentObj.pos.y = Math.min(0, contentObj.pos.y - delta.y / 3);
-  updateScrollbar();
+  if (imageLink) {
+    if (zoomEffectTimer) clearTimeout(zoomEffectTimer);
+    zoomEffect = 1;
+    cameraScale = cameraScale * (1 - 0.6 * Math.sign(delta.y));
+    camScale(cameraScale);
+    zoomEffectTimer = setTimeout(() => {
+      zoomEffect = 0;
+    }, 500);
+  } else {
+    if (scrollbar.hidden) return;
+    if (delta.y > 0 && contentObj.height + contentObj.pos.y < height() - 25) return;
+    contentObj.pos.y = Math.min(0, contentObj.pos.y - delta.y / 3);
+    updateScrollbar();
+  }
 });
 
 // Handle cursor visibility
@@ -243,10 +258,18 @@ onUpdate(() => {
     }
   }
 
+  if (imageLink) {
+    if (isMouseDown("left") && isMouseMoved()) {
+      cameraPosition = cameraPosition.sub(mouseDeltaPos().scale(1 / cameraScale));
+      camPos(cameraPosition);
+    }
+  }
+
   usePostEffect("crt", {
     iTime: t,
     iResolution: vec2(width(), height()),
     flashGlitch: glitch,
+    zoomEffect: zoomEffect,
   });
 
   setTimeout(updateScrollbar, 10);
@@ -260,6 +283,7 @@ function setColors(c) {
 }
 
 function updateScrollbar() {
+  if (imageLink) return;
   const screenHeight = height(); // Height of the screen
   const contentHeight = contentObj.height; // Height of the text content
   scrollbar.hidden = contentHeight < screenHeight;
