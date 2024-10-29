@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <title>crt-monitor</title>
-    <script type="module" crossorigin src="/crt-monitor/assets/index-B8bPHDCC.js"></script>
+    <script type="module" crossorigin src="/crt-monitor/assets/index-C40jrlVF.js"></script>
     <link rel="stylesheet" crossorigin href="/crt-monitor/assets/index-xrpVPlRf.css">
   </head>
   <body style="overflow: hidden">
@@ -93,7 +93,10 @@
       function generateLink() {
         const activeTab = document.querySelector(".tab:not(.hidden)").id;
         if (activeTab === "imageTab") {
-          const imageUrl = document.getElementById("imageLink").value;
+          const imageUrl = document
+            .getElementById("imageLink")
+            .value.replace("[img]", "")
+            .replace("[/img]", "");
           if (!imageUrl) {
             document.getElementById("generatedLink").href = "#";
             return "#";
