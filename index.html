@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <title>crt-monitor</title>
-    <script type="module" crossorigin src="/crt-monitor/assets/index-C40jrlVF.js"></script>
+    <script type="module" crossorigin src="/crt-monitor/assets/index-sd8UBB6e.js"></script>
     <link rel="stylesheet" crossorigin href="/crt-monitor/assets/index-xrpVPlRf.css">
   </head>
   <body style="overflow: hidden">
@@ -105,6 +105,7 @@
 
           const url = new URL(window.location.href);
           url.searchParams.set("image", encodedUrl);
+          url.searchParams.delete("content");
           url.searchParams.set("c", colorSelect.value.slice(0, 1));
           document.getElementById("generatedLink").href = url.toString();
           return url.toString();
@@ -113,6 +114,7 @@
         if (activeTab === "textTab") {
           const content = contentTextarea.value;
           const url = new URL(window.location.href);
+          url.searchParams.delete("image");
           url.searchParams.set("content", content);
           url.searchParams.set(
             "slowtype",
