@@ -186,10 +186,12 @@ onKeyPress((ch) => {
     }
     case "=":
     case "+": {
+      if (!imageLink) return;
       zoomImage(-1);
       break;
     }
     case "-": {
+      if (!imageLink) return;
       zoomImage(1);
       break;
     }
